@@ -1,0 +1,19 @@
+{
+  "name": "magicid-contracts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MAGicID/MAGicID-contracts.git"
+  },
+  "author": "Ganesh Prasad Kumble",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/MAGicID/MAGicID-contracts/issues"
+  },
+  "homepage": "https://github.com/MAGicID/MAGicID-contracts#readme"
+}
