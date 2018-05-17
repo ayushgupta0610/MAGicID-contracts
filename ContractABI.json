@@ -1,0 +1,680 @@
+{"interface":[
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "oraclizeID",
+				"type": "bytes32"
+			},
+			{
+				"name": "_result",
+				"type": "string"
+			}
+		],
+		"name": "__callback",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "myid",
+				"type": "bytes32"
+			},
+			{
+				"name": "result",
+				"type": "string"
+			},
+			{
+				"name": "proof",
+				"type": "bytes"
+			}
+		],
+		"name": "__callback",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "agency_id",
+				"type": "bytes32"
+			},
+			{
+				"name": "_time_fence",
+				"type": "uint256"
+			},
+			{
+				"name": "_location_fence",
+				"type": "bytes32[]"
+			}
+		],
+		"name": "authID",
+		"outputs": [
+			{
+				"name": "authIDStatus",
+				"type": "bool"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "agency_id",
+				"type": "bytes32"
+			},
+			{
+				"name": "_agency_name",
+				"type": "bytes32"
+			},
+			{
+				"name": "_agency_domain",
+				"type": "bytes32"
+			},
+			{
+				"name": "_features",
+				"type": "bool[]"
+			}
+		],
+		"name": "createAccessAgency",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			},
+			{
+				"name": "_personal",
+				"type": "bytes32[]"
+			}
+		],
+		"name": "createMagicID",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "getAgencyCount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "getMemberCount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_agencyAddress",
+				"type": "address"
+			}
+		],
+		"name": "nameResolveAgency",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_agency_id",
+				"type": "bytes32"
+			},
+			{
+				"name": "_isActive",
+				"type": "bool"
+			}
+		],
+		"name": "setAgencyAccess",
+		"outputs": [
+			{
+				"name": "setAgencyAccessStatus",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "source",
+				"type": "string"
+			}
+		],
+		"name": "stringToBytes32",
+		"outputs": [
+			{
+				"name": "result",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "AccessAgencyArray",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "agencyID",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "agencyIDOraclizeID",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "x",
+				"type": "bytes32"
+			}
+		],
+		"name": "bytes32ToString",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "contractOwner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getBioFace",
+		"outputs": [
+			{
+				"name": "isRet",
+				"type": "bool"
+			},
+			{
+				"name": "ret_face",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getBioIRIS",
+		"outputs": [
+			{
+				"name": "isRet",
+				"type": "bool"
+			},
+			{
+				"name": "ret_iris_left",
+				"type": "string"
+			},
+			{
+				"name": "ret_iris_right",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getBioLeftFingers",
+		"outputs": [
+			{
+				"name": "isRet",
+				"type": "bool"
+			},
+			{
+				"name": "ret_left_finger_1",
+				"type": "string"
+			},
+			{
+				"name": "ret_left_finger_2",
+				"type": "string"
+			},
+			{
+				"name": "ret_left_finger_3",
+				"type": "string"
+			},
+			{
+				"name": "ret_left_finger_4",
+				"type": "string"
+			},
+			{
+				"name": "ret_left_finger_5",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getBioRightFingers",
+		"outputs": [
+			{
+				"name": "isRet",
+				"type": "bool"
+			},
+			{
+				"name": "ret_right_finger_1",
+				"type": "string"
+			},
+			{
+				"name": "ret_right_finger_2",
+				"type": "string"
+			},
+			{
+				"name": "ret_right_finger_3",
+				"type": "string"
+			},
+			{
+				"name": "ret_right_finger_4",
+				"type": "string"
+			},
+			{
+				"name": "ret_right_finger_5",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getIDAccessors",
+		"outputs": [
+			{
+				"name": "accessorsArray",
+				"type": "address[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getIDaddress",
+		"outputs": [
+			{
+				"name": "isRet",
+				"type": "bool"
+			},
+			{
+				"name": "ret_personalAddress",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getIDdob",
+		"outputs": [
+			{
+				"name": "isRet",
+				"type": "bool"
+			},
+			{
+				"name": "ret_dob",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getIDemail",
+		"outputs": [
+			{
+				"name": "isRet",
+				"type": "bool"
+			},
+			{
+				"name": "ret_email",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getIDGender",
+		"outputs": [
+			{
+				"name": "isRet",
+				"type": "bool"
+			},
+			{
+				"name": "ret_gender",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getIDmobile",
+		"outputs": [
+			{
+				"name": "isRet",
+				"type": "bool"
+			},
+			{
+				"name": "ret_mobile",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getIDName",
+		"outputs": [
+			{
+				"name": "isRet",
+				"type": "bool"
+			},
+			{
+				"name": "ret_name",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getIDParentName",
+		"outputs": [
+			{
+				"name": "isRet",
+				"type": "bool"
+			},
+			{
+				"name": "ret_parentName",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "uin",
+				"type": "bytes32"
+			}
+		],
+		"name": "getIDUIN",
+		"outputs": [
+			{
+				"name": "isRet",
+				"type": "bool"
+			},
+			{
+				"name": "ret_uin",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "uin",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "uinArray",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "uinOraclizeID",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]}

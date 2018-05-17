@@ -1,81 +1,94 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.4.20;
+pragma experimental ABIEncoderV2;
+
+import "github.com/oraclize/ethereum-api/oraclizeAPI_0.4.sol";
+
+// Changed MAGic to Magic
+// Changed ua to userAddress
+contract MagicIDContract is usingOraclize{
 
 
-contract MAGicIDContract {
-    address public IDOwner;
+    address public contractOwner;
+    mapping (bytes32 => uint16) uin_version;
+    mapping (bytes32 => uint16) agency_version;
+    bytes32 public uin;
+    bytes32 public agencyID;
+    bytes32 public uinOraclizeID;
+    bytes32 public agencyIDOraclizeID;
     /* mapping (address => uint) AccessAgencyMap; */
-    mapping (address => MAGicIDStruct) address_MAGicIDStruct;
+    mapping (address => MagicIDStruct) address_MagicIDStruct;
     mapping (address => AccessAgencyStruct) address_AccessAgencyStruct;
-    mapping (string => address[]) MagicIDUIN_AgencyAddress;
-    mapping (string => address) AccessAgencyID_AccessAgencyAddress;
-    /* mapping (address => IDInstance) userAddress_IDInstace; */
-    mapping (address => IDInstance) User_AgencyMap;
-    /* mapping (string => MAGicIDStruct) uin_MagicIDElement; */
-    mapping (string => address) uin_UserAddress;
+    mapping (bytes32 => address[]) MagicIDUIN_AgencyAddress;
+    mapping (bytes32 => address) AccessAgencyID_AccessAgencyAddress;
+    mapping (bytes32 => address) uin_UserAddress;
+    /* mapping (address => IDInstance) userAddress_IDInstance; */
 
+    // Commented here
+    /* mapping (address => IDInstance) User_AgencyMap; */
+
+    /* mapping (bytes32 => MagicIDStruct) uin_MagicIDElement; */
+    mapping (bytes32 => mapping(bytes32 => IDInstance)) uin_AgencyID_IDInstance;
+    /* event IDAccessed(address from, MagicIDStruct whichID); */
+
+
+    // Changed IDInstance
     struct IDInstance {
-      string ID_UIN;
-      string AccessAgencyID;
       uint time_fence;
       bytes32[] location_fence;
     }
-    IDInstance[] IDInstanceArray;
 
-    struct MAGicIDStruct {
-      string bg_uin;
-      string bg_name;
-      string bg_gender;
-      string bg_dob;
-      string bg_parentname;
-      string bg_address;
-      string bg_mobile;
-      string bg_email;
-
-      bool isActive;
-      string current_loc;
-
-      string bm_iris_left;
-      string bm_iris_right;
-      string bm_face;
-      string bm_rightfinger_1;
-      string bm_rightfinger_2;
-      string bm_rightfinger_3;
-      string bm_rightfinger_4;
-      string bm_rightfinger_5;
-      string bm_leftfinger_1;
-      string bm_leftfinger_2;
-      string bm_leftfinger_3;
-      string bm_leftfinger_4;
-      string bm_leftfinger_5;
+    // Changed parentname to parentName, rightfinger to right_finger, leftfinger to left_finger
+    struct MagicIDStruct {
+      bytes32 uin;
+      MagicIDStruct1 magicIDStruct1;
+      MagicIDStruct2 magicIDStruct2;
+      MagicIDStruct3 magicIDStruct3;
+      MagicIDStruct4 magicIDStruct4;
     }
-    MAGicIDStruct[] public MagicIDArray;
 
-
-    struct AccessAgencyStruct {
-      string agency_id;
-      string agency_name;
-      string agency_domain;
-
-      bool isActive;
-
-      bool isAllowedName;
-      bool isAllowedGender;
-      bool isAllowedDOB;
-      bool isAllowedParentName;
-      bool isAllowedAddress;
-      bool isAllowedMobile;
-      bool isAllowedEmail;
-      bool isAllowedCurrentLoc;
-      bool isAllowedBioIRIS;
-      bool isAllowedBioFace;
-      bool isAllowedBioRightFingers;
-      bool isAllowedBioLeftFingers;
+    struct MagicIDStruct1 {
+      bytes32 name;
+      bytes32 gender;
+      bytes32 dob;
+      bytes32 parentName;
+      bytes32 personalAddress;
+      bytes32 mobile;
+      bytes32 email;
     }
-    AccessAgencyStruct[] public AccessAgencyArray;
+
+    struct MagicIDStruct2 {
+      bytes32 iris_left;
+      bytes32 iris_right;
+      bytes32 face;
+    }
+
+    struct MagicIDStruct3 {
+      bytes32 right_finger_1;
+      bytes32 right_finger_2;
+      bytes32 right_finger_3;
+      bytes32 right_finger_4;
+      bytes32 right_finger_5;
+    }
+
+    struct MagicIDStruct4 {
+      bytes32 left_finger_1;
+      bytes32 left_finger_2;
+      bytes32 left_finger_3;
+      bytes32 left_finger_4;
+      bytes32 left_finger_5;
+    }
+    string[] public uinArray;
 
     //MODIFIERS
-    modifier isIDOwner() {
-      if (msg.sender != IDOwner) {
+    modifier isIDOwner(bytes32 uin) {
+      if (msg.sender != uin_UserAddress[uin]) {
+        throw;
+      }
+      _; // continue executing rest of method body
+    }
+
+    modifier isContractOwner() {
+      if(msg.sender != contractOwner){
         throw;
       }
       _; // continue executing rest of method body
@@ -89,343 +102,331 @@ contract MAGicIDContract {
       _; // continue to access the ID info of the user (citizen)
     }
 
-    function MAGicIDContract() {
-      IDOwner = msg.sender;
+    function MagicIDContract() {
+     contractOwner = msg.sender;
     }
 
-    function createMagicID(string _bg_uin,
-    string _bg_name,
-    string _bg_gender,
-    string _bg_dob,
-    string _bg_parentname,
-    string _bg_address,
-    string _bg_mobile,
-    string _bg_email,
-    string _bm_iris_left,
-    string _bm_iris_right,
-    string _bm_face,
-    string _bm_rightfinger_1,
-    string _bm_rightfinger_2,
-    string _bm_rightfinger_3,
-    string _bm_rightfinger_4,
-    string _bm_rightfinger_5,
-    string _bm_leftfinger_1,
-    string _bm_leftfinger_2,
-    string _bm_leftfinger_3,
-    string _bm_leftfinger_4,
-    string _bm_leftfinger_5) returns (bool createMagicIDStatus) {
-      uin_UserAddress[_bg_uin] = msg.sender;
-      var ID = address_MAGicIDStruct[msg.sender];
-      ID.bg_uin = _bg_uin;
-      ID.bg_name = _bg_name;
-      ID.bg_gender = _bg_gender;
-      ID.bg_dob = _bg_dob;
-      ID.bg_parentname = _bg_parentname;
-      ID.bg_address = _bg_address;
-      ID.bg_mobile = _bg_mobile;
-      ID.bg_email = _bg_email;
-
-      ID.bm_iris_left = _bm_iris_left;
-      ID.bm_iris_right = _bm_iris_right;
-      ID.bm_face = _bm_face;
-      ID.bm_rightfinger_1 = _bm_rightfinger_1;
-      ID.bm_rightfinger_2 = _bm_rightfinger_2;
-      ID.bm_rightfinger_3 = _bm_rightfinger_3;
-      ID.bm_rightfinger_4 = _bm_rightfinger_4;
-      ID.bm_rightfinger_5 = _bm_rightfinger_5;
-      ID.bm_leftfinger_1 = _bm_leftfinger_1;
-      ID.bm_leftfinger_2 = _bm_leftfinger_2;
-      ID.bm_leftfinger_3 = _bm_leftfinger_3;
-      ID.bm_leftfinger_4 = _bm_leftfinger_4;
-      ID.bm_leftfinger_5 = _bm_leftfinger_5;
-      MagicIDArray.push(ID);
-      return true;
+    function createMagicID(bytes32 uin, bytes32[] _personal) returns (bool){
+        uin_UserAddress[uin] = msg.sender;
+        var magicID1 = createMagicID1(_personal);
+        var magicID2 = createMagicID2(_personal);
+        var magicID3 = createMagicID3(_personal);
+        var magicID4 = createMagicID4(_personal);
+        MagicIDStruct memory magicID = MagicIDStruct(uin, magicID1, magicID2, magicID3, magicID4);
+        address_MagicIDStruct[msg.sender] = magicID;
+        uinArray.push(bytes32ToString(uin));
+        return true;
     }
 
-    function authID(string _agency_id, uint _time_fence, bytes32[] _location_fence) isIDOwner() returns (bool authIDStatus) {
-      MAGicIDStruct myMagicID = address_MAGicIDStruct[msg.sender];
-      string my_uin = myMagicID.bg_uin;
-      address agencyAddress = AccessAgencyID_AccessAgencyAddress[_agency_id];
+    function createMagicID1(bytes32[] _personal) internal returns (MagicIDStruct1) {
+      MagicIDStruct1 ID;
+      ID.name = _personal[0];
+      ID.gender = _personal[1];
+      ID.dob = _personal[2];
+      ID.parentName = _personal[3];
+      ID.personalAddress = _personal[4];
+      ID.mobile = _personal[5];
+      ID.email = _personal[6];
+      return ID;
+    }
+
+    function createMagicID2(bytes32[] _personal) internal returns (MagicIDStruct2) {
+      MagicIDStruct2 ID;
+      ID.iris_left = _personal[7];
+      ID.iris_right = _personal[8];
+      ID.face = _personal[9];
+      return ID;
+    }
+
+    function createMagicID3(bytes32[] _personal) internal returns (MagicIDStruct3) {
+      MagicIDStruct3 ID;
+      ID.right_finger_1 = _personal[10];
+      ID.right_finger_2 = _personal[11];
+      ID.right_finger_3 = _personal[12];
+      ID.right_finger_4 = _personal[13];
+      ID.right_finger_5 = _personal[14];
+      return ID;
+    }
+
+    function createMagicID4(
+        bytes32[] _personal
+        ) internal returns (MagicIDStruct4) {
+      MagicIDStruct4 ID;
+      ID.left_finger_1 = _personal[15];
+      ID.left_finger_2 = _personal[16];
+      ID.left_finger_3 = _personal[17];
+      ID.left_finger_4 = _personal[18];
+      ID.left_finger_5 = _personal[19];
+      return ID;
+    }
+
+    // Removed keccak256 function here. Input _time_fence in s.
+    function authID(bytes32 agency_id, uint _time_fence, bytes32[] _location_fence) payable returns (bool authIDStatus) {
+      MagicIDStruct myMagicID = address_MagicIDStruct[msg.sender];
+      bytes32 my_uin = myMagicID.uin;
+      address agencyAddress = AccessAgencyID_AccessAgencyAddress[agency_id];
+        // Instead of a modifier this will make sure that only the IDOowner aunthenticates himself/herself and the agency is active.
+        require(msg.sender == uin_UserAddress[my_uin]);
+        require(address_AccessAgencyStruct[agencyAddress].isActive == true);
+
       MagicIDUIN_AgencyAddress[my_uin].push(agencyAddress);
-      var newIDInstance = User_AgencyMap[msg.sender];
-      newIDInstance.ID_UIN = my_uin;
-      newIDInstance.AccessAgencyID = _agency_id;
-      newIDInstance.time_fence = _time_fence;
-      newIDInstance.location_fence = _location_fence;
-      for(uint d = 0; d < IDInstanceArray.length; d++) {
-        if (keccak256(IDInstanceArray[d].ID_UIN) == keccak256(my_uin) && keccak256(IDInstanceArray[d].AccessAgencyID) == keccak256(_agency_id)){
-          IDInstanceArray[d].time_fence = _time_fence;
-          IDInstanceArray[d].location_fence = _location_fence;
-        }
-      }
-      IDInstanceArray.push(newIDInstance);
+      uin_AgencyID_IDInstance[my_uin][agency_id].time_fence = now + _time_fence;
+      uin_AgencyID_IDInstance[my_uin][agency_id].location_fence = _location_fence;
+
+      // This is to set the uin_AgencyID_IDInstance[my_uin][agency_id].time_fence = 0 after the time_fence.
+      uinOraclizeID = oraclize_query(_time_fence, "URL", strConcat("json(https://lottery-0610.herokuapp.com/revoke/", bytes32ToString(my_uin), "/", bytes32ToString(agency_id), ").uin"));
+      agencyIDOraclizeID = oraclize_query(_time_fence, "URL", strConcat("json(https://lottery-0610.herokuapp.com/revoke/", bytes32ToString(my_uin), "/", bytes32ToString(agency_id), ").agencyID"));
       return  true;
     }
 
-    function getIDUIN(string _bg_uin) returns (bool isRet, string ret_bg_uin) {
+    function getMagicIDFromUIN(bytes32 uin) constant internal returns (MagicIDStruct storage) {
+      address userAddress = uin_UserAddress[uin];
+      return address_MagicIDStruct[userAddress];
+    }
+
+    // Change return variables' names here
+    function getIDUIN(bytes32 uin) constant isAccessAgency returns (bool isRet, string ret_uin) {
       AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "");
-            }
-          }
-        }
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
-      return (true, magicID.bg_uin);
+      if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+        return (false, "");
+      }
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
+      return (true, bytes32ToString(magicID.uin));
     }
 
-    function getIDName(string _bg_uin) returns (bool isRet, string ret_bg_name) {
+    // Change return variables' names here
+    function getIDName(bytes32 uin) constant isAccessAgency returns (bool isRet, string ret_name) {
         AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "");
-            }
-          }
+        if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+          return (false, "");
         }
-        require(queryingAgency.isAllowedName);
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
-      return (true, magicID.bg_name);
+        require(queryingAgency.accessAgencyStruct2.isAllowedName);
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
+      return (true, bytes32ToString(magicID.magicIDStruct1.name));
     }
 
-    function getIDGender(string _bg_uin) returns (bool isRet, string ret_bg_gender) {
+    // Change return variables' names here
+    function getIDGender(bytes32 uin) constant isAccessAgency returns (bool isRet, string ret_gender) {
         AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "");
-            }
-          }
+        if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+          return (false, "");
         }
-        require(queryingAgency.isAllowedGender);
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
-      return (true, magicID.bg_gender);
+        require(queryingAgency.accessAgencyStruct2.isAllowedGender);
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
+      return (true, bytes32ToString(magicID.magicIDStruct1.gender));
     }
 
-    function getIDdob(string _bg_uin) returns (bool isRet, string ret_bg_dob) {
+    // Change return variables' names here
+    function getIDdob(bytes32 uin) constant isAccessAgency returns (bool isRet, string ret_dob) {
         AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "");
-            }
-          }
+        if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+          return (false, "");
         }
-        require(queryingAgency.isAllowedDOB);
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
-      return (true, magicID.bg_dob);
+        require(queryingAgency.accessAgencyStruct2.isAllowedDOB);
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
+      return (true, bytes32ToString(magicID.magicIDStruct1.dob));
     }
 
-    function getIDparentname(string _bg_uin) returns (bool isRet, string ret_bg_parentname) {
+    // Change return variables' names here
+    function getIDParentName(bytes32 uin) constant isAccessAgency returns (bool isRet, string ret_parentName) {
         AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "");
-            }
-          }
+        if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+          return (false, "");
         }
-        require(queryingAgency.isAllowedParentName);
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
-      return (true, magicID.bg_parentname);
+        require(queryingAgency.accessAgencyStruct2.isAllowedParentName);
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
+      return (true, bytes32ToString(magicID.magicIDStruct1.parentName));
     }
 
-    function getIDaddress(string _bg_uin) returns (bool isRet, string ret_bg_address) {
+    // Change return variables' names here
+    function getIDaddress(bytes32 uin) constant isAccessAgency returns (bool isRet, string ret_personalAddress) {
         AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "");
-            }
-          }
+        if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+          return (false, "");
         }
-        require(queryingAgency.isAllowedAddress);
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
-      return (true, magicID.bg_address);
+        require(queryingAgency.accessAgencyStruct2.isAllowedAddress);
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
+      return (true, bytes32ToString(magicID.magicIDStruct1.personalAddress));
     }
 
-    function getIDmobile(string _bg_uin) returns (bool isRet, string ret_bg_mobile) {
+    // Change return variables' names here
+    function getIDmobile(bytes32 uin) constant isAccessAgency returns (bool isRet, string ret_mobile) {
         AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "");
-            }
-          }
+        if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+          return (false, "");
         }
-        require(queryingAgency.isAllowedMobile);
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
-      return (true, magicID.bg_mobile);
+        require(queryingAgency.accessAgencyStruct2.isAllowedMobile);
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
+      return (true, bytes32ToString(magicID.magicIDStruct1.mobile));
     }
 
-    function getIDemail(string _bg_uin) returns (bool isRet, string ret_bg_email) {
+    // Change return variables' names here
+    function getIDemail(bytes32 uin) constant isAccessAgency returns (bool isRet, string ret_email) {
         AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "");
-            }
-          }
+        if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+          return (false, "");
         }
-        require(queryingAgency.isAllowedEmail);
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
-      return (true, magicID.bg_email);
+        require(queryingAgency.accessAgencyStruct3.isAllowedEmail);
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
+      return (true, bytes32ToString(magicID.magicIDStruct1.email));
     }
 
-    function getIDCurrentLoc(string _bg_uin) returns (bool isRet, string ret_bg_current_loc) {
+    // Change return variables' names here
+    /* function getIDCurrentLoc(bytes32 uin) isAccessAgency returns (bool isRet, bytes32 ret_current_loc) {
         AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "");
-            }
-          }
+        if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+          return (false, "");
         }
         require(queryingAgency.isAllowedCurrentLoc);
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
       return (true, magicID.current_loc);
-    }
+    } */
 
-    function getBioIRIS(string _bg_uin) returns (bool isRet, string ret_bm_iris_left, string ret_bm_iris_right) {
+    // Change return variables' names here
+    function getBioIRIS(bytes32 uin) constant isAccessAgency returns (bool isRet, string ret_iris_left, string ret_iris_right) {
         AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "", "");
-            }
-          }
+        if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+          return (false, "", "");
         }
-        require(queryingAgency.isAllowedBioIRIS);
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
-      return (true, magicID.bm_iris_left, magicID.bm_iris_right);
+        require(queryingAgency.accessAgencyStruct3.isAllowedBioIRIS);
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
+      return (true, bytes32ToString(magicID.magicIDStruct2.iris_left), bytes32ToString(magicID.magicIDStruct2.iris_right));
     }
 
-    function getBioFace(string _bg_uin) returns (bool isRet, string ret_bm_face) {
+    // Change return variables' names here
+    function getBioFace(bytes32 uin) constant isAccessAgency returns (bool isRet, string ret_face) {
         AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "");
-            }
-          }
+        if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+          return (false, "");
         }
-        require(queryingAgency.isAllowedBioFace);
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
-      return (true, magicID.bm_face);
+        require(queryingAgency.accessAgencyStruct3.isAllowedBioFace);
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
+      return (true, bytes32ToString(magicID.magicIDStruct2.face));
     }
 
-    function getBioRightFingers(string _bg_uin) returns (bool isRet, string ret_bm_rightfinger_1,
-      string ret_bm_rightfinger_2,
-      string ret_bm_rightfinger_3,
-      string ret_bm_rightfinger_4,
-      string ret_bm_rightfinger_5) {
+    // Change return variables' names here
+    function getBioRightFingers(bytes32 uin) constant isAccessAgency returns (bool isRet, string ret_right_finger_1, string ret_right_finger_2, string ret_right_finger_3, string ret_right_finger_4,string ret_right_finger_5) {
           AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "", "", "", "", "");
-            }
+          if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+            return (false, "", "", "", "", "");
           }
-        }
-        require(queryingAgency.isAllowedBioRightFingers);
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
-      return (true, magicID.bm_rightfinger_1, magicID.bm_rightfinger_2, magicID.bm_rightfinger_3, magicID.bm_rightfinger_4, magicID.bm_rightfinger_5);
+        require(queryingAgency.accessAgencyStruct3.isAllowedBioRightFingers);
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
+      return (true, bytes32ToString(magicID.magicIDStruct3.right_finger_1), bytes32ToString(magicID.magicIDStruct3.right_finger_2), bytes32ToString(magicID.magicIDStruct3.right_finger_3), bytes32ToString(magicID.magicIDStruct3.right_finger_4), bytes32ToString(magicID.magicIDStruct3.right_finger_5));
     }
 
-    function getBioLeftFingers(string _bg_uin) returns (bool isRet, string ret_bm_leftfinger_1,
-      string ret_bm_leftfinger_2,
-      string ret_bm_leftfinger_3,
-      string ret_bm_leftfinger_4,
-      string ret_bm_leftfinger_5) {
+    // Change return variables' names here
+    function getBioLeftFingers(bytes32 uin) constant isAccessAgency returns (bool isRet, string ret_left_finger_1, string ret_left_finger_2, string ret_left_finger_3, string ret_left_finger_4, string ret_left_finger_5) {
           AccessAgencyStruct queryingAgency = address_AccessAgencyStruct[msg.sender];
-        for(uint e = 0; e < IDInstanceArray.length; e++) {
-          if(keccak256(IDInstanceArray[e].ID_UIN) == keccak256(_bg_uin) && keccak256(IDInstanceArray[e].AccessAgencyID) == keccak256(queryingAgency.agency_id)){
-            if(IDInstanceArray[e].time_fence > now){
-              return (false, "", "", "", "", "");
-            }
+          if(uin_AgencyID_IDInstance[uin][queryingAgency.agency_id].time_fence < now){
+            return (false, "", "", "", "", "");
           }
-        }
-        require(queryingAgency.isAllowedBioLeftFingers);
-      address ua = uin_UserAddress[_bg_uin];
-      MAGicIDStruct magicID = address_MAGicIDStruct[ua];
-      return (true, magicID.bm_leftfinger_1, magicID.bm_leftfinger_2, magicID.bm_leftfinger_3, magicID.bm_leftfinger_4, magicID.bm_leftfinger_5);
+        require(queryingAgency.accessAgencyStruct3.isAllowedBioLeftFingers);
+      MagicIDStruct storage magicID = getMagicIDFromUIN(uin);
+      return (true, bytes32ToString(magicID.magicIDStruct4.left_finger_1), bytes32ToString(magicID.magicIDStruct4.left_finger_2), bytes32ToString(magicID.magicIDStruct4.left_finger_3), bytes32ToString(magicID.magicIDStruct4.left_finger_4), bytes32ToString(magicID.magicIDStruct4.left_finger_5));
     }
 
-    function revokeID() returns (bool revokeIDStatus) {
-    }
-
-    function getIDAccessors(string _bg_uin) returns (AccessAgencyStruct[] getIDAccessorsArray) {
-      address[] AccessorsArray = MagicIDUIN_AgencyAddress[_bg_uin];
-    }
-
-    function nameResolveAgency(address _agencyAddress) returns (string retAgencyName, string retAgencyDomain) {
-      AccessAgencyStruct agency = address_AccessAgencyStruct[_agencyAddress];
-      return (agency.agency_name, agency.agency_domain);
-    }
-
-    function setAgencyAccess() returns (bool setAgencyAccessStatus) {
-
-    }
-
-    function createAccessAgency(string _agency_id,
-      string _agency_name,
-      string _agency_domain,
-      bool _isActive,
-      bool _isAllowedName,
-      bool _isAllowedGender,
-      bool _isAllowedDOB,
-      bool _isAllowedParentName,
-      bool _isAllowedAddress,
-      bool _isAllowedMobile,
-      bool _isAllowedEmail,
-      bool _isAllowedCurrentLoc,
-      bool _isAllowedBioIRIS,
-      bool _isAllowedBioFace,
-      bool _isAllowedBioRightFingers,
-      bool _isAllowedBioLeftFingers) returns (bool createAccessAgencyStatus) {
-      var agency = address_AccessAgencyStruct[msg.sender];
-      agency.agency_id = _agency_id;
-      agency.agency_name = _agency_name;
-      agency.agency_domain = _agency_domain;
-      agency.isActive = _isActive;
-      agency.isAllowedName = _isAllowedName;
-      agency.isAllowedGender = _isAllowedGender;
-      agency.isAllowedDOB = _isAllowedDOB;
-      agency.isAllowedParentName = _isAllowedParentName;
-      agency.isAllowedAddress = _isAllowedAddress;
-      agency.isAllowedMobile = _isAllowedMobile;
-      agency.isAllowedEmail = _isAllowedEmail;
-      agency.isAllowedCurrentLoc = _isAllowedCurrentLoc;
-      agency.isAllowedBioIRIS = _isAllowedBioIRIS;
-      agency.isAllowedBioFace = _isAllowedBioFace;
-      agency.isAllowedBioRightFingers = _isAllowedBioRightFingers;
-      agency.isAllowedBioLeftFingers = _isAllowedBioLeftFingers;
-      AccessAgencyID_AccessAgencyAddress[_agency_id] = msg.sender;
-      AccessAgencyArray.push(agency);
+    // uin_AgencyID_IDInstance for _uin => time_fence = 0.
+    function revokeID(bytes32 _uin, bytes32 _agencyID) internal returns (bool revokeIDStatus) {
+      uin_AgencyID_IDInstance[_uin][_agencyID].time_fence = 0;
       return true;
     }
 
-    function stringToBytes32(string memory source) returns (bytes32 result) {
-      bytes memory tempEmptyStringTest = bytes(source);
-      if (tempEmptyStringTest.length == 0) {
-        return 0x0;
-      }
-      assembly {
-          result := mload(add(source, 32))
-      }
+    function __callback(bytes32 oraclizeID, string _result){
+        // if(msg.sender != oraclize_cbAddress() || msg.sender != uin_UserAddress[stringToBytes32(_result[0])]) throw;
+        if(msg.sender == oraclize_cbAddress() && oraclizeID == uinOraclizeID){
+          uin = stringToBytes32(_result);
+          uin_version[uin] += 1;
+        }
+        if(msg.sender == oraclize_cbAddress() && oraclizeID == agencyIDOraclizeID){
+          agencyID = stringToBytes32(_result);
+          agency_version[agencyID] += 1;
+        }
+        // If uinOraclizeID and agencyIDOraclizeID are both true for the same version
+        if(uin_version[uin] == agency_version[agencyID]){
+         revokeID(uin, agencyID);
+        }
+    }
+
+    // Check here. Returns the addresses of the agencies who accessed user's uin (or wherever the person entered). Modifier required.
+    function getIDAccessors(bytes32 uin) constant isIDOwner(uin) returns (address[] accessorsArray) {
+      accessorsArray = MagicIDUIN_AgencyAddress[uin];
+    }
+
+    // Returns name and domain of the agency when given agency's address. Can be called by user as well as other agencies.
+    function nameResolveAgency(address _agencyAddress) returns (string, string) {
+      AccessAgencyStruct agency = address_AccessAgencyStruct[_agencyAddress];
+      return (bytes32ToString(agency.agency_name), bytes32ToString(agency.agency_domain));
+    }
+
+    // Code here. Who can set isActive to false? contractOwner? Resorting with contractOwner for now.
+    function setAgencyAccess(bytes32 _agency_id, bool _isActive) returns (bool setAgencyAccessStatus) {
+      address accessAgency = AccessAgencyID_AccessAgencyAddress[_agency_id];
+      address_AccessAgencyStruct[accessAgency].isActive = _isActive;
+      return true;
+    }
+
+    struct AccessAgencyStruct {
+      bytes32 agency_id;
+      bytes32 agency_name;
+      bytes32 agency_domain;
+      bool isActive;
+      AccessAgencyStruct2 accessAgencyStruct2;
+      AccessAgencyStruct3 accessAgencyStruct3;
+    }
+
+    struct AccessAgencyStruct2 {
+      bool isAllowedName;
+      bool isAllowedGender;
+      bool isAllowedDOB;
+      bool isAllowedParentName;
+      bool isAllowedAddress;
+      bool isAllowedMobile;
+    }
+
+    struct AccessAgencyStruct3 {
+      bool isAllowedEmail;
+      bool isAllowedBioIRIS;
+      bool isAllowedBioFace;
+      bool isAllowedBioRightFingers;
+      bool isAllowedBioLeftFingers;
+    }
+    string[] public AccessAgencyArray;
+
+    function createAccessAgency(bytes32 agency_id, bytes32 _agency_name, bytes32 _agency_domain, bool[] _features) returns (bool){
+        AccessAgencyID_AccessAgencyAddress[agency_id] = msg.sender;
+        var accessAgency2 = createAccessAgency2(_features);
+        var accessAgency3 = createAccessAgency3(_features);
+        // Setting isActive of agency to false. Who can set it to true is still a mystery!
+        AccessAgencyStruct memory agency = AccessAgencyStruct(agency_id, _agency_name, _agency_domain, false, accessAgency2, accessAgency3);
+        address_AccessAgencyStruct[msg.sender] = agency;
+        AccessAgencyArray.push(bytes32ToString(agency_id));
+        return true;
+    }
+
+    function createAccessAgency2(
+        bool[] _features
+        ) internal returns (AccessAgencyStruct2) {
+      AccessAgencyStruct2 agencyStruct;
+      agencyStruct.isAllowedName = _features[0];
+      agencyStruct.isAllowedGender = _features[1];
+      agencyStruct.isAllowedDOB = _features[2];
+      agencyStruct.isAllowedParentName = _features[3];
+      agencyStruct.isAllowedAddress = _features[4];
+      agencyStruct.isAllowedMobile = _features[5];
+      return agencyStruct;
+    }
+
+    function createAccessAgency3(
+        bool[] _features
+        ) internal returns (AccessAgencyStruct3) {
+      AccessAgencyStruct3 agencyStruct;
+      agencyStruct.isAllowedEmail = _features[6];
+      agencyStruct.isAllowedBioIRIS = _features[7];
+      agencyStruct.isAllowedBioFace = _features[8];
+      agencyStruct.isAllowedBioRightFingers = _features[9];
+      agencyStruct.isAllowedBioLeftFingers = _features[10];
+      return agencyStruct;
     }
 
     function bytes32ToString(bytes32 x) constant returns (string) {
@@ -445,5 +446,21 @@ contract MAGicIDContract {
         return string(bytesStringTrimmed);
     }
 
-    event IDAccessed(address from, MAGicIDStruct whichID);
-}
+    function stringToBytes32(string memory source) returns (bytes32 result) {
+      bytes memory tempEmptyStringTest = bytes(source);
+      if (tempEmptyStringTest.length == 0) {
+        return 0x0;
+      }
+      assembly {
+          result := mload(add(source, 32))
+      }
+    }
+
+    function getAgencyCount() returns (uint){
+        return AccessAgencyArray.length;
+    }
+
+    function getMemberCount() returns (uint){
+        return uinArray.length;
+    }
+  }
